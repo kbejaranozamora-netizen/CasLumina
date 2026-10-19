@@ -1,0 +1,8 @@
+streamlit>=1.40
+google-genai
+duckdb>=1.0
+pandas
+pyarrow
+tabulate
+pyyaml
+plotly
