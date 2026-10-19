@@ -1,0 +1,76 @@
+#Lectura de a data sintetica
+# Configuración de la app «Casa Lumina · Sell Out & Inventarios» (datos 100% ficticios).
+
+# --- IA (Gemini, capa gratuita). La clave NO va aquí nunca de los nuncas: va en secretos (ver README).
+modelo: gemini-3.8-flash            # constante de la plantilla del curso
+modelo_respaldo: gemini-3.5-flash-lite   # si el principal responde «cuota agotada», se prueba este
+max_pasos: 6                        # máximo de idas y vueltas con el modelo por pregunta
+max_preguntas_sesion: 12            # tope por visitante, para cuidar la cuota gratuita porque si no esto va a estallar!
+max_preguntas_dia: 150              # tope de toda la app por día (checar si 150 make sense o lo ajustamos)
+
+max_rows: 200          # filas máximas que el agente ve por consulta (esto justo va apermitir ser un poco más eficiento en lihar de consultar las mil ocho mil filas)
+query_timeout_s: 30    # corta consultas que se cuelgan
+incluir_muestras: true # false = el catálogo que ve el modelo NO trae filas de ejemplo
+
+# Una entrada por carpeta de parquets. El nombre = nombre de la tabla SQL.
+# Los nombres de columna se normalizan solos: MAYÚSCULAS, y sin acentos.
+datasets:
+  sellout:
+    path: "data/sellout/*.parquet"
+    date_col: DATE
+    description: "Sell out diario (un parquet por año). Una fila por DATE x ID_OUTLET x EAN con venta. U = unidades, V = valor en pesos mexicanos sin IVA."
+  inventarios:
+    path: "data/inventarios/*.parquet"
+    date_col: DATE
+    description: "Inventario diario por DATE x ID_OUTLET x EAN. INV_TIENDA = inventario en tienda, INV_TRANSITO = en tránsito hacia la tienda, INV_CEDIS = en el centro de distribución de la cadena, UNID_ORDENADAS = pedido abierto."
+  cat_tiendas:
+    path: "data/catalogos/cat_tiendas*.parquet"
+    description: "Catálogo de tiendas. Llave ID_OUTLET. Cadena (RETAILER), formato, tipo de formato, región, estado, ciudad."
+  cat_eans:
+    path: "data/catalogos/cat_eans*.parquet"
+    description: "Catálogo de producto. Llave EAN. Marca (BRAND), categoría (CATEGORY), segmento, presentación, descripción."
+
+# Catálogos y con qué columna de los hechos "fact" se enlazan (lo usa check_data.py para validar cobertura y duplicados)
+dimensiones:
+  cat_tiendas: {llave: ID_OUTLET, hechos_col: ID_OUTLET}
+  cat_eans: {llave: EAN, hechos_col: EAN}
+
+# Columnas que siempre se tratan como texto (evita que un código de barras se convierta en número y no cruce)
+forzar_texto: [ID_OUTLET, ID_RETAILER, EAN]
+
+# Nombres (ya normalizados) de las columnas de los hechos. Las vistas de diagnóstico dependen de esto.
+cols:
+  tienda: ID_OUTLET
+  fecha: DATE
+  cod: EAN
+  unidades: U
+  valor: V
+  inv: INV_TIENDA              # inventario en tienda
+  inv_transito: INV_TRANSITO   # unidades en tránsito
+  inv_bodega: INV_CEDIS        # unidades en CEDIS
+  inv_pedido: UNID_ORDENADAS   # unidades ordenadas
+
+# Columnas de los catálogos que usa la pestaña Tablero (nombres ya normalizados)
+tablero:
+  tienda_llave: ID_OUTLET
+  tienda_cadena: RETAILER
+  tienda_nombre: NOMBRE
+  eans_llave: EAN
+  eans_marca: BRAND
+
+# Umbrales de diagnóstico 
+umbrales:
+  ventana_dias: 120      # v_base y vistas de diagnóstico cubren los últimos N días (para historia larga se usa sellout directo)
+  dias_riesgo: 7         # menos de N días de inventario = por agotarse (esto depende de cada cliente otro reto sería ponerlo dinamico pero por ahora lo podemos hardcodear)
+  dias_sobre: 60         # más de N días de inventario = exceso de inventario (esto depende de cada cliente otro reto sería ponerlo dinamico pero por ahora lo podemos hardcodear)
+  dias_fantasma: 14      # mínimo de días sin venta (con inventario > 0) para sospechar inventario fantasma (esto depende de cada cliente otro reto sería ponerlo dinamico pero por ahora lo podemos hardcodear)
+  umbral_caida: 0.25     # tendencia últimos 7 días vs 21 previos: +/-25%
+  z_tend_min: 1.65       # además debe ser estadísticamente relevante (~90%). 
+  min_unid_tend: 8       # unidades mínimas vendidas en 28 días para evaluar tendencias (con menos es ruido) 
+  dias_desact: 3         # inventario más viejo que N días vs la última fecha = desactualizado
+
+# Vistas de diagnóstico (se crean desde vistas.sql)
+views:
+  v_base: "Sell out + inventario por tienda x fecha x ean (últimos ventana_dias). Incluye uit (en tránsito), uiw (CEDIS), uoo (ordenadas) y reposicion_implicita."
+  v_semanal: "Tendencia semanal por tienda x ean (unidades, valor, inventario promedio, días en cero)."
+  v_diag_sku_tienda: "Foto actual por tienda x ean: velocidad, tendencia, días de inventario, repo_en_camino, pipeline y columna situacion."
