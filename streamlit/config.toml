@@ -5,6 +5,7 @@ toolbarMode = "minimal"
 gatherUsageStats = false
 
 [theme]
+base = "light"
 primaryColor = "#1D63AE"
 backgroundColor = "#F4F8FB"
 secondaryBackgroundColor = "#E8F4FB"
