@@ -2,8 +2,8 @@
 # Configuración de la app «Casa Lumina · Sell Out & Inventarios» (datos 100% ficticios).
 
 # --- IA (Gemini, capa gratuita). La clave NO va aquí nunca de los nuncas: va en secretos (ver README).
-modelo: gemini-3.8-flash            # constante de la plantilla del curso
-modelo_respaldo: gemini-3.5-flash-lite   # si el principal responde «cuota agotada», se prueba este
+modelo: gemini-2.5-flash            # constante de la plantilla del curso
+modelo_respaldo: gemini-2.5-flash-lite   # si el principal responde «cuota agotada», se prueba este
 max_pasos: 6                        # máximo de idas y vueltas con el modelo por pregunta
 max_preguntas_sesion: 12            # tope por visitante, para cuidar la cuota gratuita porque si no esto va a estallar!
 max_preguntas_dia: 150              # tope de toda la app por día (checar si 150 make sense o lo ajustamos)
