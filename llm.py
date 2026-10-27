@@ -163,7 +163,7 @@ def conversar(client, *, system: str, historial: list[dict], pregunta: str, tool
             except Exception as e:  # cuota agotada, clave incorrecta, red caída...
                 err = clasificar_error(e)
                 log.warning("Fallo de IA (%s) con %s: %s", err.tipo, modelos[i], err.detalle)
-                if err.tipo == "cuota" and i + 1 < len(modelos):
+                if err.tipo in ("cuota", "saturado", "modelo") and i + 1 < len(modelos):
                     i += 1  # prueba el modelo de respaldo
                     continue
                 raise err from e
