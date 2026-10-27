@@ -11,6 +11,7 @@ Reglas de esta capa:
 from __future__ import annotations
 
 import logging
+import time
 
 log = logging.getLogger("casa_lumina.llm")
 
@@ -35,6 +36,7 @@ MENSAJES = {
     "otro": "Algo salió mal al consultar. Intenta reformular la pregunta o vuelve a intentarlo en un momento.",
 }
 
+ESPERA_REINTENTO = (2, 5)  # segundos de espera antes de reintentar si el servicio está saturado
 TEXTO_SIN_CIERRE = "No logré cerrar la consulta en los pasos permitidos. Reformula la pregunta con algo más específico."
 
 
@@ -157,14 +159,20 @@ def conversar(client, *, system: str, historial: list[dict], pregunta: str, tool
 
     for _ in range(max_pasos):
         resp = None
+        reintentos = 0
         while resp is None:
             try:
                 resp = client.models.generate_content(model=modelos[i], contents=contenidos, config=config)
             except Exception as e:  # cuota agotada, clave incorrecta, red caída...
                 err = clasificar_error(e)
                 log.warning("Fallo de IA (%s) con %s: %s", err.tipo, modelos[i], err.detalle)
+                if err.tipo == "saturado" and reintentos < len(ESPERA_REINTENTO):
+                    time.sleep(ESPERA_REINTENTO[reintentos])  # la saturación suele pasar en segundos
+                    reintentos += 1
+                    continue
                 if err.tipo in ("cuota", "saturado", "modelo") and i + 1 < len(modelos):
                     i += 1  # prueba el modelo de respaldo
+                    reintentos = 0
                     continue
                 raise err from e
 
