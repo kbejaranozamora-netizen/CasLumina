@@ -26,7 +26,7 @@ ROOT = Path(__file__).parent
 SEED = 7
 INI_SELLOUT = date(2025, 1, 1)
 INI_INV = date(2026, 1, 1)
-FIN = date(2026, 10, 11)  # última fecha con data
+FIN = date(2026, 10, 31)  # última fecha con data
 
 # ---------------------------------------------------------------- dimensiones
 # Cadenas inventadas. regiones=None significa que tiene tiendas en todo el país.
