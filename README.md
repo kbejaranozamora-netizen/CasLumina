@@ -3,7 +3,7 @@
 **Enlace a la app:** https://caslumina-mkpumudqyjkxcvkoszjr5z.streamlit.app/
 **Autor/a:** Kathia Bejarano Zamora
 
-> Todos los datos de esta app son **ficticios**: la empresa (Casa Lumina), las cadenas, las marcas, las tiendas, los códigos de barras y las cifras están inventados.
+> Todos los datos de esta app son **ficticios**: la empresa (Casa Lumina), las cadenas, las marhttps://github.com/kbejaranozamora-netizen/CasLumina/blob/main/README.mdcas, las tiendas, los códigos de barras y las cifras están inventados.
 
 ## Pitch
 
@@ -105,16 +105,19 @@ Sin clave, la app arranca igual: el Tablero funciona y el chat avisa que la IA n
 Los crea `generar_datos_sinteticos.py` (determinista, semilla fija): 6 cadenas, 248 tiendas, 5 marcas, 66 productos, ventas diarias de ene-2025 a oct-2026 e inventario diario de 2026. Un producto y dos tiendas quedan fuera de los catálogos **a propósito**, para probar cómo se comporta la app ante datos incompletos («SIN CATALOGO»). En Streamlit Cloud la app genera los datos sola al arrancar si no los encuentra.
 
 ## Capturas
-1. **La app funcionando:** la respuesta a «¿Dónde estoy perdiendo venta por falta de producto y por qué?» con las acciones y «Ver SQL».
+1. **La app funcionando:** la respuesta a «Grafica de Inventarios» con las acciones y «Ver SQL».
 <img width="882" height="671" alt="Captura de pantalla 2026-10-31 a la(s) 10 20 38 p m" src="https://github.com/user-attachments/assets/2e8fc3ee-7a31-4bd5-b292-cc0d6fae32cf" />
 
 2. **La app ante un error:** el mensaje «El servicio de IA está saturado en este momento. Intenta de nuevo en un minuto.»
+<img width="926" height="462" alt="Captura de pantalla 2026-10-31 a la(s) 10 21 30 p m" src="https://github.com/user-attachments/assets/5e451df9-6f77-4182-8ec1-8a4cf5277c62" />
+
+4. **Mi trabajo con la IA:** una conversación con el asistente donde se ve uno de los prompts clave y lo que devolvió.
+
 <img width="582" height="657" alt="Captura de pantalla 2026-10-31 a la(s) 10 24 08 p m" src="https://github.com/user-attachments/assets/aca2bc75-fb4b-4512-99ac-4a02bbfdab0b" />
 
-3. **Mi trabajo con la IA:** una conversación con el asistente donde se ve uno de los prompts clave y lo que devolvió.
 <img width="567" height="315" alt="Captura de pantalla 2026-10-31 a la(s) 10 23 27 p m" src="https://github.com/user-attachments/assets/0ed113d9-92a8-4b33-aeab-51d361600aa7" />
 
-4. **La prueba:** la respuesta con los códigos internos que me hizo añadir la traducción automática, y el log con los tres 503.
+5. **La prueba:** la respuesta con los códigos internos que me hizo añadir la traducción automática, y el log con los tres 503.
 <img width="645" height="683" alt="Captura de pantalla 2026-10-31 a la(s) 10 22 36 p m" src="https://github.com/user-attachments/assets/e6017a08-5fbe-4907-95d9-30ff1a2cd8d7" />
-<img width="926" height="462" alt="Captura de pantalla 2026-10-31 a la(s) 10 21 30 p m" src="https://github.com/user-attachments/assets/5e451df9-6f77-4182-8ec1-8a4cf5277c62" />
+
 
