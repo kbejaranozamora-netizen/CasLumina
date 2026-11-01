@@ -3,6 +3,7 @@ Dos ideas importantes:
  - Los colores de marca son azules. Los colores de ESTADO (rojo, ámbar, verde) se quedan porque llevan significado.
  - Los códigos internos del diagnóstico (QUIEBRE, EN_TRANSITO...) se muestran al usuario con ETIQUETAS en lenguaje de KAM."""
 import math
+import re
 from string import Template
 
 NOMBRE_APP = "Casa Lumina"
@@ -125,6 +126,17 @@ def etiquetar_valores(df):
     return out
 
 
+_RE_CODIGOS = re.compile(
+    r"`?\b(" + "|".join(sorted(map(re.escape, ETIQUETAS), key=len, reverse=True)) + r")\b`?"
+)
+
+
+def etiquetar_texto(texto: str) -> str:
+    """Red de seguridad: si el modelo escribe un código interno en su respuesta (con o sin comillas de código),
+    lo cambia por la etiqueta de KAM entre «». Así el usuario nunca ve QUIEBRE, SIN_PIPELINE, etc."""
+    return _RE_CODIGOS.sub(lambda m: f"«{ETIQUETAS[m.group(1)]}»", texto)
+
+
 def encabezado(nombre) -> str:
     """Nombre de columna -> encabezado legible."""
     n = str(nombre)
@@ -203,6 +215,8 @@ section[data-testid="stSidebar"] hr { border-color: rgba(232,244,251,.15); }
 .vs-brand b { color:$CIAN; }
 
 [data-testid="stChatMessage"] { background:#fff; border:1px solid $BORDE; border-radius:16px; padding:14px 16px; }
+[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"],
+[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] * { color:$AZUL_OSCURO !important; }
 [data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarUser"]) { background:$CELESTE_SUAVE; }
 [data-testid="stChatInput"] { border-radius:18px; border:1.5px solid $AZUL; }
 [data-testid="stExpander"] { border:1px solid $BORDE; border-radius:12px; background:#fff; }
