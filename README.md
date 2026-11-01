@@ -22,6 +22,7 @@ El KAM o analista comercial de una empresa de consumo masivo vende a través de 
 1. **Chat:** el usuario escribe una pregunta en español (o elige una de las preguntas rápidas de la barra lateral) y recibe el hallazgo principal, las cifras en MXN, hasta qué fecha llegan los datos, las posibles causas y de 1 a 3 acciones. «Ver SQL» deja auditar cómo se calculó cada número.
 2. **Gráficos y tarjetas:** si el usuario pide «gráfico de venta semanal por cadena» o «un tablero de salud de inventario», la app lo dibuja y permite descargar los datos.
 3. **Tablero:** diagnóstico fijo de productos sin existencia, por agotarse, con inventario dudoso y con exceso, con filtro por cadena. **No usa IA**, así que funciona siempre.
+4. **Límite conocido:** la interfaz está pensada para escritorio; abre en celular, pero no está optimizada.
 
 ## La pieza de IA
 
