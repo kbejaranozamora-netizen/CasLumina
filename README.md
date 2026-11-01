@@ -1,7 +1,7 @@
 # Casa Lumina · Sell Out & Inventarios
 
-**Enlace a la app:** [URL DE LA APP]
-**Autor/a:** [NOMBRE COMPLETO]
+**Enlace a la app:** https://caslumina-mkpumudqyjkxcvkoszjr5z.streamlit.app/
+**Autor/a:** Kathia Bejarano Zamora
 
 > Todos los datos de esta app son **ficticios**: la empresa (Casa Lumina), las cadenas, las marcas, las tiendas, los códigos de barras y las cifras están inventados.
 
@@ -57,8 +57,8 @@ El KAM o analista comercial de una empresa de consumo masivo vende a través de 
 ## Ejecutar en local (opcional)
 
 ```bash
-./setup.sh                         # crea .venv e instala dependencias
-source .venv/bin/activate
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt    # Python 3.12
 python generar_datos_sinteticos.py # una vez: crea data/
 python selftest.py                 # motor de consultas (debe terminar con TODO OK)
 python selftest_llm.py             # capa de IA sin red (debe terminar con TODO OK)
