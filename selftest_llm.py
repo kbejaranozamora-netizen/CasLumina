@@ -160,6 +160,15 @@ c = ClienteFalso([Respuesta(llamadas=[Llamada(name="run_sql", args={"query": "x"
 r = conversar(c, max_pasos=3)
 check("si el modelo nunca termina, corta con un mensaje claro", r == llm.TEXTO_SIN_CIERRE and len(c.llamadas) == 3)
 
+# en el último paso se quitan las herramientas para obligar al modelo a cerrar con una respuesta de texto
+c = ClienteFalso([
+    Respuesta(llamadas=[Llamada(name="run_sql", args={"query": "a"})]),
+    Respuesta(llamadas=[Llamada(name="run_sql", args={"query": "b"})]),
+    Respuesta(texto="Resumen final."),
+])
+r = conversar(c, max_pasos=3)
+check("en el último paso pide la respuesta final sin herramientas", r == "Resumen final." and hasattr(c.llamadas[0].config, "tools") and not hasattr(c.llamadas[-1].config, "tools"))
+
 # ------------------------------------------------------------- 4) cuota agotada y modelo de respaldo
 c = ClienteFalso([ErrorApi(429, "RESOURCE_EXHAUSTED"), Respuesta(texto="Con el respaldo.")])
 r = conversar(c)

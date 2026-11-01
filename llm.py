@@ -157,12 +157,17 @@ def conversar(client, *, system: str, historial: list[dict], pregunta: str, tool
     contenidos = _a_contents(historial, pregunta, types)
     i = 0  # índice del modelo en uso
 
-    for _ in range(max_pasos):
+    config_cierre = types.GenerateContentConfig(system_instruction=system)  # sin herramientas: obliga a responder con texto
+
+    for paso in range(max_pasos):
+        ultimo = max_pasos > 1 and paso == max_pasos - 1  # en el último paso se pide la respuesta final, sin más consultas
         resp = None
         reintentos = 0
         while resp is None:
             try:
-                resp = client.models.generate_content(model=modelos[i], contents=contenidos, config=config)
+                resp = client.models.generate_content(
+                    model=modelos[i], contents=contenidos, config=config_cierre if ultimo else config
+                )
             except Exception as e:  # cuota agotada, clave incorrecta, red caída...
                 err = clasificar_error(e)
                 log.warning("Fallo de IA (%s) con %s: %s", err.tipo, modelos[i], err.detalle)
@@ -182,6 +187,9 @@ def conversar(client, *, system: str, historial: list[dict], pregunta: str, tool
             if not texto:
                 raise ErrorLLM("vacia")
             return texto
+
+        if ultimo:  # pidió más herramientas cuando ya no quedan pasos
+            return TEXTO_SIN_CIERRE
 
         # el modelo pidió herramientas: se guarda su turno tal cual (trae sus firmas de razonamiento) y se responde
         candidato = (getattr(resp, "candidates", None) or [None])[0]
