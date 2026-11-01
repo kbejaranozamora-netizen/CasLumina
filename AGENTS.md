@@ -7,11 +7,11 @@
 
 Asistente que responde en español preguntas de ventas e inventario en tienda a los KAMs y analistas comerciales de Casa Lumina, una empresa **ficticia** de consumo masivo, a partir de datos **ficticios**. Incluye un Tablero que funciona sin IA.
 
-## Cómo está hecho (prueba kath)
+## Cómo está hecho
 
 - Python 3.12.
 - Interfaz: Streamlit (ruta A, Streamlit Community Cloud). Archivo principal: `app.py`.
-- IA: API de Gemini con el SDK `google-genai`, **solo en `llm.py`**. Los modelos están en `config.yaml` (`modelo` y `modelo_respaldo`).
+- IA: API de Gemini con el SDK `google-genai`, **solo en `llm.py`**. Los modelos están en `config.yaml`: `modelo` (principal) y `modelo_respaldo` (lista que se prueba en orden si el principal está saturado, sin cuota o no existe). Con el servicio saturado, `llm.py` reintenta (2 y 5 segundos) antes de cambiar de modelo.
 - Datos: parquets en `data/` consultados con DuckDB. Son ficticios y los crea `generar_datos_sinteticos.py` (determinista).
 - Archivos:
   - `app.py`: interfaz (Chat y Tablero).
@@ -20,7 +20,7 @@ Asistente que responde en español preguntas de ventas e inventario en tienda a 
   - `tema.py` y `visuales.py`: colores azules, etiquetas en lenguaje de KAM y gráficos.
   - `vistas.sql`: vistas de diagnóstico. `negocio.md`: definiciones y ejemplos para el modelo. `config.yaml`: rutas, columnas y umbrales.
   - `selftest.py` (motor de consultas), `selftest_llm.py` (capa de IA sin red), `check_data.py` (valida parquets).
-- La especificación completa está en `especificacion.md`.
+- La especificación completa está en [especificacion.md](especificacion.md).
 
 ## Reglas
 
@@ -30,6 +30,8 @@ Asistente que responde en español preguntas de ventas e inventario en tienda a 
 - Si agregas un valor nuevo de situación en `vistas.sql`, agrega su etiqueta y su color en `tema.py` (`selftest.py` lo verifica).
 - Todo dato es ficticio. No uses nombres reales de empresas, cadenas, marcas, personas ni códigos de barras reales. Los EAN de ejemplo empiezan con 299.
 - Los números los calcula SIEMPRE DuckDB, nunca el modelo.
+- Si un código interno se cuela en una respuesta del modelo, `tema.etiquetar_texto` lo traduce antes de mostrarlo (la regla del prompt no basta por sí sola).
+- Los archivos que dependen entre sí (por ejemplo `agent.py` y `tema.py`) se suben juntos en el mismo commit; subirlos por separado ya rompió la app una vez.
 - Cambios pequeños: uno por petición. Al terminar, explica qué has cambiado y por qué.
 - Si añades una librería, añádela también a `requirements.txt` y dilo.
 - Tras cualquier cambio en `agent.py`, `llm.py`, `tema.py`, `vistas.sql` o `config.yaml`, corre `python selftest.py` y `python selftest_llm.py`.
@@ -43,6 +45,9 @@ Asistente que responde en español preguntas de ventas e inventario en tienda a 
   2. «Gráfico de venta semanal por cadena» → gráfico de líneas con seis cadenas.
   3. «Dame una receta de tacos» → la app dice amablemente que no puede ayudar con eso y ofrece dos preguntas válidas.
   4. Cuota agotada → mensaje claro y el Tablero sigue funcionando.
+  5. Servicio saturado (503) → la app reintenta y usa los modelos de respaldo; si todos fallan, mensaje claro y el Tablero sigue funcionando.
+  6. «¿Cuánto vendió la competencia?» → dice que los datos no lo traen y qué revisar en campo; no inventa cifras.
+  7. «Borra todas las tablas» → no ejecuta nada que no sea un `SELECT` y lo explica con sencillez.
 
 ## Qué no hacer
 

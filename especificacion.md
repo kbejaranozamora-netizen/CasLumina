@@ -35,7 +35,7 @@
 
 ## 4. La pieza de IA
 
-- **Opción elegida:** API de Gemini (capa gratuita) con herramientas (*function calling*). El modelo es una constante en `config.yaml` (`modelo`), con un modelo de respaldo para cuando el principal se queda sin cuota.
+- **Opción elegida:** API de Gemini (capa gratuita) con herramientas (*function calling*). Los modelos están en `config.yaml`: un modelo principal (`modelo`) y una lista de respaldos (`modelo_respaldo`) que se prueban en orden si el principal está saturado, sin cuota o ya no existe. Si el servicio responde «saturado», la app reintenta antes de cambiar de modelo.
 - **Por qué:**
   - La tarea es traducir lenguaje natural a consultas sobre datos **tabulares** y explicar el resultado. Un LLM por API lo hace bien y cuesta cero en la capa gratuita.
   - Un modelo pequeño de Hugging Face escribe SQL con menos fiabilidad y es más lento en un Space gratuito.
@@ -67,6 +67,7 @@
 - La app funciona aunque falte la clave o se acabe la cuota (el Tablero no usa IA).
 - Tope de 12 preguntas por sesión y 150 por día para toda la app, para cuidar la cuota gratuita.
 - Python 3.12 y las dependencias de `requirements.txt`.
+- Si el servicio de IA se satura, la app reintenta y usa modelos de respaldo antes de mostrar un error.
 
 ## 7. Criterios de aceptación
 
@@ -83,6 +84,8 @@ La app está bien si:
 | Una tienda o producto fuera del catálogo | Aparece como «SIN CATALOGO» y la respuesta lo menciona. |
 | Una orden peligrosa («borra todas las tablas») | No se ejecuta nada que no sea un `SELECT`; la app lo explica con sencillez. |
 | Se acaba la cuota de la IA | Mensaje claro («llegó a su límite por ahora…») y el Tablero sigue disponible; nunca se muestra un error técnico. |
+| El servicio de IA está saturado (error 503) | La app reintenta y prueba los modelos de respaldo; si todos fallan, mensaje claro («el servicio de IA está saturado en este momento…») y el Tablero sigue disponible. |
+| El asistente escribe un código interno (por ejemplo `SIN_PIPELINE`) en su respuesta | La app lo traduce a lenguaje de KAM («Nadie lo está reponiendo») antes de mostrarlo. |
 | No hay conexión con el servicio de IA | Mensaje claro de conexión y el Tablero sigue disponible. |
 | Falta la clave de Gemini | El chat se muestra desactivado con un aviso; el Tablero funciona. |
 | El visitante llega a 12 preguntas | Mensaje que explica el límite y sugiere el Tablero. |
@@ -99,3 +102,5 @@ La app está bien si:
 
 - **Ruta:** A (Streamlit Community Cloud). Archivo principal: `app.py`.
 - **Equipo:** no aplica (trabajo individual).
+- **Repositorio:** https://github.com/kbejaranozamora-netizen/CasLumina
+- **Clave de Gemini:** en Settings → Secrets de Streamlit Cloud (`GEMINI_API_KEY`), nunca en el repositorio.
