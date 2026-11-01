@@ -115,9 +115,6 @@ Los crea `generar_datos_sinteticos.py` (determinista, semilla fija): 6 cadenas, 
 
 <img width="582" height="657" alt="Captura de pantalla 2026-10-31 a la(s) 10 24 08 p m" src="https://github.com/user-attachments/assets/aca2bc75-fb4b-4512-99ac-4a02bbfdab0b" />
 
-<img width="567" height="315" alt="Captura de pantalla 2026-10-31 a la(s) 10 23 27 p m" src="https://github.com/user-attachments/assets/0ed113d9-92a8-4b33-aeab-51d361600aa7" />
-
-5. **La prueba:** la respuesta con los códigos internos que me hizo añadir la traducción automática, y el log con los tres 503.
 <img width="645" height="683" alt="Captura de pantalla 2026-10-31 a la(s) 10 22 36 p m" src="https://github.com/user-attachments/assets/e6017a08-5fbe-4907-95d9-30ff1a2cd8d7" />
 
 
