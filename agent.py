@@ -299,4 +299,10 @@ def ask(client, cur, historial: list, pregunta: str, system: str):
         modelos=lista_de_modelos(),
         max_pasos=CFG.get("max_pasos", 6),
     )
+    if texto == llm.TEXTO_SIN_CIERRE and visuales:
+        # el modelo alcanzó a dibujar pero no a explicar: mejor orientar que mostrar un aviso de fallo
+        texto = (
+            "Te dejé arriba las tarjetas y gráficos que pediste. Si quieres que los interprete, "
+            "pregúntame por una cadena o un tema concreto, por ejemplo «¿dónde tengo más faltantes en Hiper Costa?»."
+        )
     return tema.etiquetar_texto(texto), sqls, visuales

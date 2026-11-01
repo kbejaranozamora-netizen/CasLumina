@@ -6,7 +6,7 @@ modelo_respaldo:                        # se prueban en orden si el principal es
   - gemini-3.6-flash
   - gemini-3.5-flash-lite
   - gemini-3.1-flash-lite
-max_pasos: 6                        # máximo de idas y vueltas con el modelo por pregunta
+max_pasos: 10                       # máximo de idas y vueltas con el modelo por pregunta
 max_preguntas_sesion: 12            # tope por visitante, para cuidar la cuota gratuita
 max_preguntas_dia: 150              # tope de toda la app por día
 
@@ -32,7 +32,7 @@ datasets:
     path: "data/catalogos/cat_eans*.parquet"
     description: "Catálogo de producto. Llave EAN. Marca (BRAND), categoría (CATEGORY), segmento, presentación, descripción."
 
-# Catálogos y con qué columna de los hechos se enlazan (lo usa check_data.py para validar cobertura y duplicados)
+# Catálogos y con qué columna de los hechos se enlazan (para validar cobertura y duplicados)
 dimensiones:
   cat_tiendas: {llave: ID_OUTLET, hechos_col: ID_OUTLET}
   cat_eans: {llave: EAN, hechos_col: EAN}
