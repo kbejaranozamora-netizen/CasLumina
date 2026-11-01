@@ -11,7 +11,7 @@
 2. Esta app deja preguntar en español por ventas e inventario, responde con cifras, gráficos y acciones, y trae un Tablero de diagnóstico que funciona sin IA.
 3. La IA (Gemini) traduce una pregunta nueva a una consulta correcta, cruza ventas con inventario y explica el resultado con prudencia; los números los calcula siempre una consulta SQL (DuckDB), así que la IA no puede inventar cifras y cada una se puede auditar con «Ver SQL».
 4. En la prueba descubrí tres cosas que no esperaba: Gemini a veces responde «saturado» (503), así que añadí reintentos y una cadena de cuatro modelos; a veces escribía códigos internos como `SIN_PIPELINE` en vez de lenguaje de KAM, así que la app ahora los traduce sola; y subir los archivos por separado rompió la app una vez, así que ahora los subo juntos.
-5. Lo siguiente sería enseñarle al asistente a comparar precios dentro del mismo segmento y presentación, que el catálogo ya trae: hoy promedia entre marcas sin agrupar, y por eso Cristal Plus aparece en $136.16 MXN y Brillo Claro en $68.60 MXN sin que sean comparables.
+5. Lo siguiente sería sumar una tabla de ejecución en tienda (exhibición, ubicación y precio en anaquel) para cruzarla con ventas e inventario y detectar oportunidades de ejecución: hoy, cuando la venta cae aunque hay producto, la app solo puede decir «se recomienda una revisión física en tienda», como hizo en mi prueba de «dónde pierdo venta», porque sus datos no traen exhibición ni ubicaciones.
 
 ## El problema
 
