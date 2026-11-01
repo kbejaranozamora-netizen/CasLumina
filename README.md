@@ -11,7 +11,7 @@
 2. Esta app deja preguntar en español por ventas e inventario, responde con cifras, gráficos y acciones, y trae un Tablero de diagnóstico que funciona sin IA.
 3. La IA (Gemini) traduce una pregunta nueva a una consulta correcta, cruza ventas con inventario y explica el resultado con prudencia; los números los calcula siempre una consulta SQL (DuckDB), así que la IA no puede inventar cifras y cada una se puede auditar con «Ver SQL».
 4. En la prueba descubrí tres cosas que no esperaba: Gemini a veces responde «saturado» (503), así que añadí reintentos y una cadena de cuatro modelos; a veces escribía códigos internos como `SIN_PIPELINE` en vez de lenguaje de KAM, así que la app ahora los traduce sola; y subir los archivos por separado rompió la app una vez, así que ahora los subo juntos.
-5. Lo siguiente sería agregar la presentación de cada producto (tamaño o contenido) al catálogo: hoy el precio promedio mezcla presentaciones y por eso Cristal Plus aparece en $136.16 MXN y Brillo Claro en $68.60 MXN sin que sean comparables.
+5. Lo siguiente sería enseñarle al asistente a comparar precios dentro del mismo segmento y presentación, que el catálogo ya trae: hoy promedia entre marcas sin agrupar, y por eso Cristal Plus aparece en $136.16 MXN y Brillo Claro en $68.60 MXN sin que sean comparables.
 
 ## El problema
 
@@ -51,7 +51,7 @@ El KAM o analista comercial de una empresa de consumo masivo vende a través de 
 |---|---|---|---|
 | Yo, como usuaria | «¿Dónde estoy perdiendo venta por falta de producto y por qué?» con Gemini activado | `gemini-3.8-flash` respondió «saturado» (503) tres veces; después la app respondió en cerca de un minuto con el hallazgo y las acciones, pero con códigos internos (`SIN_PIPELINE`, `EN_TRANSITO`) en el texto | Reintentos automáticos, cadena de cuatro modelos y `tema.etiquetar_texto`, que traduce los códigos a lenguaje de KAM |
 | Yo, como usuaria | Cambiar el modelo por `gemini-2.5-flash` | «El modelo de IA configurado no está disponible» (error 404) | Volví a los modelos 3.x, que sí están disponibles para mi cuenta |
-| Yo, como usuaria | «Hazme una gráfica de precio…» (valor entre unidades por marca) | Dibujó el gráfico correcto, incluida la barra «SIN CATALOGO»; el precio promedio mezcla presentaciones distintas | Nada por ahora: lo dejé anotado como límite y como mejora futura (agregar presentación al catálogo) |
+| Yo, como usuaria | «Hazme una gráfica de precio…» (valor entre unidades por marca) | Dibujó el gráfico correcto, incluida la barra «SIN CATALOGO»; el precio promedio mezcla presentaciones distintas | Nada por ahora: lo dejé anotado como límite y como mejora futura (que compare por segmento y presentación, datos que el catálogo ya trae) |
 | Yo, como usuaria | La pregunta rápida «Dame un tablero de salud de inventario por cadena» | Dibujó las tarjetas y el gráfico, pero cerró con «No logré cerrar la consulta en los pasos permitidos» porque agotó los 6 pasos sin escribir la conclusión | Subí el límite a 10 pasos, en el último paso obligo al modelo a cerrar con texto y, si ya dibujó algo, la app muestra un mensaje útil en vez de un aviso de fallo. Después de eso respondió bien y más rápido |
 | Yo, como usuaria | Actualizar `agent.py` sin subir `tema.py` | La app falló porque `agent.py` llamaba a una función que aún no existía en `tema.py` | Subí `tema.py`; la regla de subir juntos los archivos que dependen entre sí quedó en `AGENTS.md` |
 
