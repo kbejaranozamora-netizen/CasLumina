@@ -65,7 +65,8 @@ Paleta de tonos azules, encabezado azul oscuro con los datos ficticios a la vist
 
 
 ENTREGA
-Entrega una base inicial para ir ajustando después. 
+Entrega una base inicial para ir ajustando después.»
+
   2. «Me gusta el mundo ficticio. Agreguemos más clientes (no solo tres) y algunos productos más, sin exagerar. Usa una paleta de tonos más azules y recuerda que este es mi proyecto escolar»
   3. «Traduce los códigos internos del diagnóstico a lenguaje de KAM, en los gráficos, las tablas y las respuestas del asistente.»
   4. «Construyamos ahora el repositorio completo del reto y lo vamos afinando con las pruebas.»
