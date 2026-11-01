@@ -35,11 +35,42 @@ El KAM o analista comercial de una empresa de consumo masivo vende a través de 
 - **Herramientas:** Claude (en claude.ai y con su agente de código) para diseñar, escribir y probar el código; Gemini API (`google-genai`) como la IA de la app; DuckDB y pandas para los datos; Streamlit y Streamlit Community Cloud para la interfaz y el despliegue; GitHub para el repositorio.
 - **Fichero de contexto del agente:** [AGENTS.md](AGENTS.md) (y `CLAUDE.md`, que apunta a él).
 - **Prompts clave** (copiados tal cual):
-  1. «Si trabajo sola porque somos increibles, el tablero que se deje como funcionalidad y si ficcionalizemos todo. sólo que obivo haga sentido.»
-  2. «me gusta el mundo ficticio, agreguemos mas clientes no solo 3 y mas productos no muchos, estoy de acuerdo con lo que eliminas y la paleta que sea tonos azules, además enfocate a que esto es mi proyecto escolar»
-  3. «traduzcamoslo a lenguaje KAM»
-  4. «y si hacemos todo ahorita y vamos afinando?»
-  5. «Nombre si fallece, simplifiquemos demasiado como podemos hacerle? sera que un rag ayude? o si es mejor la api?»
+- 
+  1. «Eres un desarrollador senior de Python. Construye completa la app «Casa Lumina · Sell Out & Inventarios» siguiendo esta especificación. No me hagas preguntas: si algo no está definido, elige lo más razonable y dime qué elegiste.
+
+PROBLEMA:
+El KAM o analista comercial de una empresa de consumo masivo vende a través de cadenas de autoservicio. Hoy depende de que BI le prepare reportes o cruza archivos a mano, y cuando llega la respuesta el faltante ya pasó. Quiero que pregunte en español, sin saber SQL, y reciba cifras, gráficos y acciones.
+
+MUNDO FICTICIO (todo inventado; nada real)
+Empresa Casa Lumina. Productos con segmento y presentación, EAN que empiezan con 299 y unas 250 tiendas. Ventas diarias de ene-2025 a oct-2026 e inventario diario de 2026 (inventario en tienda, en tránsito, en CEDIS, unidades ordenadas), generados con semilla fija. Deja a propósito 1 EAN y 2 tiendas fuera de los catálogos y muéstralos como «SIN CATALOGO». Crea escenarios coherentes (quiebres, inventario atorado en CEDIS, sobreinventario, marcas que crecen y marcas que caen).
+
+FUNCIONALIDADES (máximo tres)
+1. Chat: preguntas en español sobre ventas e inventario. Responde con hallazgo, cifras en MXN sin IVA, fecha de corte de los datos, posibles causas, qué no se puede saber y de 1 a 3 acciones. Incluye «Ver SQL» para auditar y preguntas rápidas en la barra lateral.
+2. Gráficos y tarjetas de resumen cuando el usuario los pide, con descarga de los datos.
+3. Tablero de diagnóstico (sin existencia, por agotarse, inventario dudoso, exceso) con filtro por cadena, que funciona SIN IA.
+
+ARQUITECTURA
+- Python 3.12 y Streamlit, desplegable en Streamlit Community Cloud. Archivo principal app.py.
+- La IA es la API de Gemini con el SDK google-genai y function calling (herramientas run_sql y show_visual). Solo habla con Gemini el módulo llm.py.
+- DuckDB ejecuta todas las consultas sobre parquets. El modelo nunca calcula cifras: solo escribe SQL y explica.
+- Guardrails de SQL: un solo SELECT, sin leer archivos ni ejecutar comandos, máximo 200 filas y 30 segundos.
+- config.yaml con el modelo principal y una lista de modelos de respaldo, límites (máximo 10 pasos del modelo, 12 preguntas por sesión, 150 por día), rutas y umbrales.
+- Archivos: app.py, agent.py (prompt, herramientas y guardrails), llm.py, tema.py y visuales.py, vistas.sql, negocio.md, config.yaml, generar_datos_sinteticos.py, requirements.txt, y si faltan datos al arrancar la app los genera sola.
+
+LENGUAJE DE KAM
+El usuario nunca ve códigos internos (QUIEBRE, EN_TRANSITO, SIN_PIPELINE…). Crea un diccionario de etiquetas y úsalo en gráficos, tablas y respuestas. Además traduce automáticamente cualquier código que el modelo escriba en su texto.
+
+DISEÑO
+Paleta de tonos azules, encabezado azul oscuro con los datos ficticios a la vista, barra lateral oscura con preguntas rápidas, gráficos limpios y legibles.
+
+
+ENTREGA
+Entrega una base inicial para ir ajustando después. 
+  2. «Me gusta el mundo ficticio. Agreguemos más clientes (no solo tres) y algunos productos más, sin exagerar. Usa una paleta de tonos más azules y recuerda que este es mi proyecto escolar»
+  3. «Traduce los códigos internos del diagnóstico a lenguaje de KAM, en los gráficos, las tablas y las respuestas del asistente.»
+  4. «Construyamos ahora el repositorio completo del reto y lo vamos afinando con las pruebas.»
+  5. «La app falla cuando Gemini se satura. ¿Conviene simplificar la arquitectura, usar un RAG o mantener la API? Propón cómo hacerla más resistente.»
+     
 - **Qué delegué al agente y qué revisé a mano:**
   - *Delegué:* escribir el generador de datos ficticios, el código de la app, la capa de Gemini con su manejo de errores y las pruebas automáticas.
   - *Revisé a mano:* todo lo que se despliega. Subí cada archivo a GitHub, probé la app real en Streamlit Cloud con mis propias preguntas, puse la clave yo misma en Secrets y comprobé los mensajes de error. Esas pruebas encontraron cosas que las pruebas automáticas no vieron: Gemini saturado, un nombre de modelo que no existía para mi cuenta y una función que faltaba por subir un archivo sin otro.
@@ -74,10 +105,16 @@ Sin clave, la app arranca igual: el Tablero funciona y el chat avisa que la IA n
 Los crea `generar_datos_sinteticos.py` (determinista, semilla fija): 6 cadenas, 248 tiendas, 5 marcas, 66 productos, ventas diarias de ene-2025 a oct-2026 e inventario diario de 2026. Un producto y dos tiendas quedan fuera de los catálogos **a propósito**, para probar cómo se comporta la app ante datos incompletos («SIN CATALOGO»). En Streamlit Cloud la app genera los datos sola al arrancar si no los encuentra.
 
 ## Capturas
-
 1. **La app funcionando:** la respuesta a «¿Dónde estoy perdiendo venta por falta de producto y por qué?» con las acciones y «Ver SQL».
-2. **La app ante un error:** el mensaje «El servicio de IA está saturado en este momento. Intenta de nuevo en un minuto.»
-3. **Mi trabajo con la IA:** una conversación con el asistente donde se ve uno de los prompts clave y lo que devolvió.
-4. **La prueba:** la respuesta con los códigos internos que me hizo añadir la traducción automática, y el log con los tres 503.
+<img width="882" height="671" alt="Captura de pantalla 2026-10-31 a la(s) 10 20 38 p m" src="https://github.com/user-attachments/assets/2e8fc3ee-7a31-4bd5-b292-cc0d6fae32cf" />
 
-Ninguna captura muestra la clave.
+2. **La app ante un error:** el mensaje «El servicio de IA está saturado en este momento. Intenta de nuevo en un minuto.»
+<img width="582" height="657" alt="Captura de pantalla 2026-10-31 a la(s) 10 24 08 p m" src="https://github.com/user-attachments/assets/aca2bc75-fb4b-4512-99ac-4a02bbfdab0b" />
+
+3. **Mi trabajo con la IA:** una conversación con el asistente donde se ve uno de los prompts clave y lo que devolvió.
+<img width="567" height="315" alt="Captura de pantalla 2026-10-31 a la(s) 10 23 27 p m" src="https://github.com/user-attachments/assets/0ed113d9-92a8-4b33-aeab-51d361600aa7" />
+
+4. **La prueba:** la respuesta con los códigos internos que me hizo añadir la traducción automática, y el log con los tres 503.
+<img width="645" height="683" alt="Captura de pantalla 2026-10-31 a la(s) 10 22 36 p m" src="https://github.com/user-attachments/assets/e6017a08-5fbe-4907-95d9-30ff1a2cd8d7" />
+<img width="926" height="462" alt="Captura de pantalla 2026-10-31 a la(s) 10 21 30 p m" src="https://github.com/user-attachments/assets/5e451df9-6f77-4182-8ec1-8a4cf5277c62" />
+
