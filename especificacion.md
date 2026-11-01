@@ -1,6 +1,5 @@
 # Especificación · Casa Lumina · Sell Out & Inventarios
 
-> Una buena especificación es la que otro asistente de IA podría construir sin hacer preguntas. De ella sale la ficha del hito de la semana 2.
 > Casa Lumina es una empresa **ficticia** de consumo masivo. Todos los datos son inventados.
 
 ## 1. Problema y usuario
@@ -20,7 +19,7 @@
 
 ## 2. Qué hace el producto
 
-1. **Preguntar en español sobre ventas e inventario.** La app responde en lenguaje de negocio: primero el hallazgo, luego las cifras de apoyo, las posibles causas y de 1 a 3 acciones. Quien quiera auditar abre «Ver SQL». La barra lateral trae preguntas de ejemplo.
+1. **Preguntar en español sobre ventas e inventario.** La app responde en lenguaje de negocio: primero el hallazgo, luego las cifras de apoyo, las posibles causas y de 1 a 3 acciones. Quien quiera auditar abre «Ver SQL». La barra lateral trae preguntas de ejemplo.(Estos se deja sobretodo para los técnicos pero pensando en desplegarla sabiendo que un equipo d eventas no es técnico se puede quitar).
 2. **Pedir gráficos y tarjetas de resumen.** Si el usuario escribe «gráfico de venta semanal por cadena» o «un tablero de salud de inventario», la app dibuja el resultado y permite descargar los datos.
 3. **Tablero de diagnóstico, sin IA.** Muestra qué productos están sin existencia en tienda, cuáles están por agotarse, cuáles tienen inventario dudoso y cuáles exceso, con filtro por cadena. Funciona siempre, incluso si se acaba la cuota de la IA o falta la clave.
 
@@ -55,7 +54,7 @@
 
 1. Entra a la app y ve «Pregúntale a tus datos», hasta qué fecha llegan los datos y que son datos ficticios.
 2. Escribe una pregunta, o hace clic en una pregunta rápida, o abre el Tablero.
-3. Recibe la respuesta con gráficos si ayudan, una lectura en lenguaje de negocio y acciones. Puede abrir «Ver SQL» para auditar o descargar los datos.
+3. Recibe la respuesta con gráficos si ayudan, una lectura en lenguaje de negocio y acciones. Puede abrir «Ver SQL» para descargar los datos.
 4. Si la IA no está disponible (cuota, conexión), ve un mensaje claro y puede seguir con el Tablero.
 
 ## 6. Restricciones
@@ -92,7 +91,7 @@ La app está bien si:
 
 ## 8. Fuera de alcance (por ahora)
 
-- Subir datos propios o conectar fuentes reales.
+- Subir datos propios o conectar fuentes reales. (Esto implica temas de privacidad de datos por eso en CasaLumina trabajamos con datos ficticios)
 - Cuentas de usuario y conversaciones guardadas entre sesiones.
 - Alertas por correo o WhatsApp.
 - Pronóstico de ventas y metas por tienda.
