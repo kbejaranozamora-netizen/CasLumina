@@ -270,6 +270,14 @@ def _despachar(cur, nombre: str, args: dict, sqls: list, visuales: list) -> str:
     return f"Herramienta desconocida: {nombre}. Usa run_sql o show_visual."
 
 
+def lista_de_modelos() -> list[str]:
+    """Modelo principal + respaldos, en orden. `modelo_respaldo` en config.yaml puede ser uno o una lista."""
+    respaldo = CFG.get("modelo_respaldo") or []
+    if isinstance(respaldo, str):
+        respaldo = [respaldo]
+    return [m for m in [CFG.get("modelo"), *respaldo] if m]
+
+
 def ask(client, cur, historial: list, pregunta: str, system: str):
     """Responde una pregunta. Devuelve (texto, sqls_ejecutados, visuales[(spec, DataFrame)]).
 
@@ -288,7 +296,7 @@ def ask(client, cur, historial: list, pregunta: str, system: str):
         pregunta=pregunta,
         tools=TOOLS,
         despachar=despachar,
-        modelos=[CFG.get("modelo"), CFG.get("modelo_respaldo")],
+        modelos=lista_de_modelos(),
         max_pasos=CFG.get("max_pasos", 6),
     )
-    return texto, sqls, visuales
+    return tema.etiquetar_texto(texto), sqls, visuales
