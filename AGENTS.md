@@ -1,8 +1,5 @@
 # AGENTS.md · Casa Lumina · Sell Out & Inventarios
 
-> Este fichero lo leen los agentes de programación antes de tocar el código.
-> Para Claude Code existe un `CLAUDE.md` con una sola línea que apunta aquí.
-
 ## Qué es este proyecto
 
 Asistente que responde en español preguntas de ventas e inventario en tienda a los KAMs y analistas comerciales de Casa Lumina, una empresa **ficticia** de consumo masivo, a partir de datos **ficticios**. Incluye un Tablero que funciona sin IA.
@@ -19,7 +16,7 @@ Asistente que responde en español preguntas de ventas e inventario en tienda a 
   - `llm.py`: todo lo que habla con Gemini, incluido el manejo de errores (cuota, conexión, clave).
   - `tema.py` y `visuales.py`: colores azules, etiquetas en lenguaje de KAM y gráficos.
   - `vistas.sql`: vistas de diagnóstico. `negocio.md`: definiciones y ejemplos para el modelo. `config.yaml`: rutas, columnas y umbrales.
-  - `selftest.py` (motor de consultas), `selftest_llm.py` (capa de IA sin red), `check_data.py` (valida parquets).
+  - `selftest.py` (motor de consultas), `selftest_llm.py` (capa de IA sin red).
 - La especificación completa está en [especificacion.md](especificacion.md).
 
 ## Reglas
